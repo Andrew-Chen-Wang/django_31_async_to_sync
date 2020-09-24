@@ -4,6 +4,12 @@ By: Andrew Chen Wang
 
 Created on: 10 September 2020 midnight for some reason...
 
+TL;DR Don't use async views until an async database package is made
+and Django incorporates it into its ORM. Use completely sync views
+since those middlewares are still sync. Context switching will
+degrade your server's performance; using sync views will maintain
+your server's performance.
+
 #### Abstract
 
 We all know that the Django ORM is crazy easy to use. It's also integral in almost
@@ -16,7 +22,10 @@ authenticate goes from several (HTTP requests) to just one.
 
 Before we begin, please check out [psycopg3](https://github.com/psycopg/psycopg3)
 to allow the Django ORM to be more async capable without needing to use the
-primary thing I'll be using for this test.
+primary thing I'll be using for this test. Also, please read the Django docs
+on the performance gain (and even degradation!) when mixing a/sync views,
+middleware, and other functionalities like context switching using asgiref
+for database or cache operations.
 
 ---
 
@@ -59,6 +68,10 @@ and naturally redis-py accordingly.
 
 I've left out authentication in all these views and decided not to setup something like
 Traefik for HTTPS as to maintain as pure of a development server as possible.
+
+In addition to all of this, I wanted to also try out psycopg3. Although it's currently in early
+development, it's a worthwhile task to see the efficiency boost, completely without
+asgiref doing the context switches.
 
 ---
 
